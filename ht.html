@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>123</title>
+    <style>
+        *{
+            padding: 0;margin: 0;
+        }
+        #login{
+            width: 350px;
+            height: 200px;
+            border: 1px solid #999;
+            position: absolute;
+            cursor: move;
+            background-color: #fefefe;
+        }
+        #login #box{
+            width: 350px;
+            height: 30px;
+            background-color: #eee;
+            text-align: center;
+            line-height: 30px;
+        }
+</style>
+</head>
+<body>
+<div id="login">
+    <div id="box">登录窗</div>
+</div>
+    <script>
+        window.onload=function(){
+            var login=document.getElementById('login');    //获取登录框ID
+            login.onmousedown=function(e){       //鼠标按下登录框区域时触发
+                var e=e||window.event;      //兼容ie和firefox
+                var diffX=e.clientX-login.offsetLeft;   //鼠标坐标值-登录框到左端的距离=鼠标到弹框左边的距离,下边同理
+                var diffY=e.clientY-login.offsetTop;   
+                if(diffX>0&&diffY>0){
+                    document.onmousemove=function(e){     //触发鼠标移动事件
+                        login.style.left=e.clientX-diffX+'px';    //不断移动过程中，鼠标坐标值-鼠标到弹框左边的距离即登录框到页面的左边距离不断更新，实现拖拽效果
+                        login.style.top=e.clientY-diffY+'px';
+ 
+                        var cw=document.documentElement.clientWidth||document.body.clientWidth;   //兼容ie和firefox，获取网页可视区域宽、高
+                        var ch=document.documentElement.clientHeight||document.body.clientHeight;
+                        if(e.clientX-diffX<0){   //看下图3情形，判断已出左边界
+                            login.style.left='0px';   //出界都重置为0px
+                        }else if(e.clientX-diffX>cw-login.offsetWidth){   //看下图2情形，判断已出右边界
+                            login.style.left=cw-login.offsetWidth+'px';   //重置为左边最大值
+                        }
+                        if(e.clientY-diffY<0){   //与上同理
+                            login.style.top='0px';
+                        }else if(e.clientY>ch-login.offsetHeight){
+                            login.style.top=ch-login.offsetHeight+'px';
+                        }
+                    }
+                }   
+                document.onmouseup=function(){    //鼠标抬起时，鼠标按下与移动事件为null
+                    document.onmousemove=null;
+                    document.onmouseup=null;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

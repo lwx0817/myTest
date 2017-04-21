@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JS实现轻量级计算器</title>
+    <style>
+
+    *{
+    margin: 0;
+    padding: 0;
+    font-family: "Consolas", "Menlo", "Courier", monospace;
+}
+span{display: block;}
+body{background: #f0f2f1;}
+ 
+#box{
+    width: 380px;
+    height: 675px;
+    margin-top: 8px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow:0 0 10px #888;
+}
+ 
+#top{
+    width: inherit;
+    height: 285px;
+    background: #333333;
+    position: relative;
+}
+#top p{
+    color: #e7e7e7;
+    font-size: 16px;
+    padding-top: 5px;
+    padding-right: 10px;
+    text-align: right;
+}
+#top input{
+    width: 368px;
+    height: 70px;
+    position: absolute;
+    color: #e8e8e8;
+    background: none;
+    border: none;
+    font-size: 35px;
+    text-align: right;
+    line-height: 70px;
+    cursor: text;
+    padding-right: 10px;
+}
+ 
+#main{
+    width: inherit;
+    height: 390px;
+    background: #f0f2f1;
+}
+#main span{
+    width: 94px;
+    height: 77px;
+    border-right: 1px solid #dff0d8;
+    border-top: 1px solid #dff0d8;
+    float: left;
+    font-size: 32px;
+    text-align: center;
+    line-height: 80px;
+    cursor: pointer;
+}
+.div1{color: orangered;}
+.div2{color: #000;}
+.div3{border-right: none;color: #fff;}
+ 
+#main span:hover{background: #e1e1e1;}
+#main span:active{box-shadow: 0 0 5px 5px #fff;}
+    </style>
+</head>
+<body>
+<div id="box">
+    <div id="top">
+        <p>Lightweight Calculator by PYJ</p>
+        <input id="screen0" type="text" style="margin-top: 100px;" disabled/>
+        <input id="screen1" type="text" style="margin-top: 190px;" disabled/>
+    </div>
+    <div id="main">
+        <span class="div1" style="font-size: 26px">(</span>
+        <span class="div1" style="font-size: 26px">)</span>
+        <span class="div1" style="font-size: 26px">DEL</span>
+        <span class="div1">/</span>
+ 
+        <span class="div2">7</span>
+        <span class="div2">8</span>
+        <span class="div2">9</span>
+        <span class="div1">*</span>
+ 
+        <span class="div2">4</span>
+        <span class="div2">5</span>
+        <span class="div2">6</span>
+        <span class="div1">-</span>
+ 
+        <span class="div2">1</span>
+        <span class="div2">2</span>
+        <span class="div2">3</span>
+        <span class="div1">+</span>
+ 
+        <span class="div2">0</span>
+        <span class="div2">.</span>
+        <span class="div1">C</span>
+        <span class="div3" style="width: 94px;background: orangered;">=</span>
+    </div>
+</div>
+<script>
+    window.onload = function(){
+    var screen0 = document.getElementById('screen0'),   //获取上显示器内容
+        screen1 = document.getElementById('screen1');   //获取下显示器内容
+    screen0.value = null;
+    screen1.value = null;
+    calculate(screen0, screen1);     
+};
+
+function calculate(screen0,screen1){
+    var box = document.getElementById('main'), //获取按钮盒子
+        count = 0;                             //记录显示器字符或数字个数
+
+    box.onclick = function(e){
+        var symbol = e.target.innerText;       //获取按钮字符
+
+        //内容是否超过允许长度
+        if((screen1.value + symbol).length > 40){
+            alert('Content exceeds the maximum length!');
+            return null;
+        }
+        if(symbol == 'C'){          //清零
+            count = 0;
+            screen0.value = null;
+            screen1.value = null;
+        }else if(symbol != '='){   //表达式
+            if(symbol == 'DEL'){   
+                if(screen1.value == null){
+                    count = 0;
+                }else{
+                    screen1.value = screen1.value.slice(0,-1);
+                    count--;
+                }
+            }else{
+                screen1.value += symbol;
+            }
+        }else if(symbol == '='){   //计算结果
+            screen0.value = screen1.value;
+            screen1.value = test(screen1.value);
+        }
+    }
+    }
+function calculate(screen0,screen1){
+    var box = document.getElementById('main'), //获取按钮盒子
+        count = 0;                             //记录显示器字符或数字个数
+
+    box.onclick = function(e){
+        var symbol = e.target.innerText;       //获取按钮字符
+
+        //内容是否超过允许长度
+        if((screen1.value + symbol).length > 40){
+            alert('Content exceeds the maximum length!');
+            return null;
+        }
+        if(symbol == 'C'){          //清零
+            count = 0;
+            screen0.value = null;
+            screen1.value = null;
+        }else if(symbol != '='){   //表达式
+            if(symbol == 'DEL'){   
+                if(screen1.value == null){
+                    count = 0;
+                }else{
+                    screen1.value = screen1.value.slice(0,-1);
+                    count--;
+                }
+            }else{
+                screen1.value += symbol;
+            }
+        }else if(symbol == '='){   //计算结果
+            screen0.value = screen1.value;
+            screen1.value = test(screen1.value);
+        }
+    }
+ }
+function test(text) {
+    var index = 0;   //记录符号索引
+
+    while(text){
+        //首先计算括号内内容
+        if(text.lastIndexOf("(") > -1){
+            index = text.lastIndexOf("(");
+            var endIndex = text.indexOf(")", index);
+            if(endIndex > -1) {
+                var result = Math.formatFloat(test(text.substring(index + 1, endIndex)) ,2);
+                return Math.formatFloat(test(text.substring(0, index) + result + text.substring(endIndex + 1)) ,2);
+            }
+
+        }else if(text.indexOf("+") >-1){
+            index = text.indexOf("+");
+            return Math.formatFloat(test(text.substring(0, index)) + test(text.substring(index + 1)) ,2);
+
+        }else if(text.lastIndexOf("-") > -1){
+            index = text.lastIndexOf("-");
+            if(text[index-1] == '*'){
+                return Math.formatFloat(test(text.substring(0, index-1)) * test(text.substring(index)) ,2);
+            }else if(text[index-1] == '/'){
+                return Math.formatFloat(test(text.substring(0, index-1)) / test(text.substring(index)) ,2);
+            }else{
+                return Math.formatFloat(test(text.substring(0, index)) - test(text.substring(index + 1)) ,2);
+            }
+
+        }else if(text.lastIndexOf("*") > -1){
+                index = text.lastIndexOf("*");
+            return Math.formatFloat(test(text.substring(0, index)) * test(text.substring(index + 1)) ,2);
+
+        }else if(text.lastIndexOf("/") > -1){
+            index = text.lastIndexOf("/");
+            return Math.formatFloat(test(text.substring(0, index)) / test(text.substring(index + 1)) ,2);
+
+        }else{
+            return Math.formatFloat(text,2);
+        }
+    }
+
+    return null;
+}
+
+
+Math.formatFloat = function (exp, digit){
+    var m = Math.pow(10, digit);
+     return parseInt(exp*m, 10)/m;
+ };
+</script>
+</body>
+</html>
